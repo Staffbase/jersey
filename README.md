@@ -1,3 +1,66 @@
+See below for the original jersey readme...
+
+In order to use this patched version, you need to change dependencies to jersey from (for instance)
+```xml
+<dependency>
+    <groupId>org.glassfish.jersey.core</groupId>
+    <artifactId>jersey-server</artifactId>
+    <version>${jerseyVersion}</version>
+</dependency>
+```
+to
+```xml
+<dependency>
+    <groupId>org.glassfish.jersey.core</groupId>
+    <artifactId>jersey-server</artifactId>
+    <version>${jerseyVersion}</version>
+    <exclusions>
+        <exclusion>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-common</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
+```       
+And add a dependency to
+```xml
+<dependency>
+    <groupId>org.glassfish.jersey.core</groupId>
+    <artifactId>jersey-common-FIX-1</artifactId>
+    <version>${jerseyVersion}</version>
+</dependency>
+```
+In order to fulfill the dependency you may run ```mvn -DskipTests -pl common-core``` and find the outcome jar in ```common-core/target```.
+
+When you put the jar file to the directory ```libs``` and add the following to you pom.xml
+```xml
+ <plugin>
+    <artifactId>maven-install-plugin</artifactId>
+    <version>2.3.1</version>
+    <inherited>false</inherited>
+    <executions>
+        <execution>
+            <id>jersey-fix</id>
+            <goals>
+                <goal>install-file</goal>
+            </goals>
+            <phase>initialize</phase>
+            <configuration>
+                <file>libs/jersey-common-FIX-1-2.26.jar</file>
+                <groupId>org.glassfish.jersey.core</groupId>
+                <artifactId>jersey-common-FIX-1</artifactId>
+                <packaging>jar</packaging>
+                <version>2.26</version>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+```
+then you can deploy jar file to your local repository by calling ```mvn initialize```.
+After that the dependency is found by maven.
+
+
+
 ### About Jersey
 
 Jersey is a REST framework that provides JAX-RS Reference Implementation and more.
